@@ -89,7 +89,6 @@ const Homepage = (props) => {
                     onChange={handleEmail}
                     disabled={inputDisable}
                     required
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,0}$"
                   />
                   <button
                     style={{
