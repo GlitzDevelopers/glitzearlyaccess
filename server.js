@@ -10,7 +10,7 @@ const app = express();
 const mailchimp = new Mailchimp(mc_api_key);
 
 // serve static files from React App
-app.use(express.static(path.join(__dirname, "glitz_prelauch/build")));
+// app.use(express.static(path.join(__dirname, "glitz_prelauch/build")));
 
 // set api endpoint
 app.get("/api/memberAdd", (req, res) => {
