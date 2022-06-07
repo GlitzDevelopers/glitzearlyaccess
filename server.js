@@ -17,7 +17,12 @@ app.get("/", (req, res) => {
 app.post("/signup", function (req, res) {
   request
     .post("https://us12.api.mailchimp.com/3.0/lists/c6b7992d29/members/")
-    .set("Content-Type", "application/json;charset=utf-8")
+    .set(
+      "Content-Type",
+      "application/json;charset=utf-8",
+      "Access-Control-Allow-Origin",
+      "*"
+    )
     .set(
       "Authorization",
       "Basic " + new Buffer("any:" + mailchimpApiKey).toString("base64")
@@ -41,9 +46,6 @@ app.post("/signup", function (req, res) {
       }
     });
 });
-
-
-
 
 // set api endpoint
 // app.get("/api/memberAdd", (req, res) => {
