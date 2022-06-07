@@ -1,40 +1,69 @@
 const express = require("express");
 const path = require("path");
-const Mailchimp = require("mailchimp-api-v3");
-require("dotenv").config({ path: __dirname + "/variables.env" });
+const { request } = require("https");
+const bodyParser = require("body-parser");
 
-const mc_api_key = process.env.MAILCHIMP_API_KEY;
-const mc_list_id = process.env.LIST_ID;
+var app = express();
+var mailchimpApiKey = "161e2bbe4e8b11cc30ae0839519eb1c7-us12";
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const app = express();
-const mailchimp = new Mailchimp(mc_api_key);
-
-// serve static files from React App
-// app.use(express.static(path.join(__dirname, "glitz_prelauch/build")));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// set api endpoint
-app.get("/api/memberAdd", (req, res) => {
-  mailchimp
-    .post("/lists/c6b7992d29/members/", {
-      email_address: req.query.email,
+app.post("/signup", function (req, res) {
+  request
+    .post("https://us12.api.mailchimp.com/3.0/lists/c6b7992d29/members/")
+    .set("Content-Type", "application/json;charset=utf-8")
+    .set(
+      "Authorization",
+      "Basic " + new Buffer("any:" + mailchimpApiKey).toString("base64")
+    )
+    .send({
+      email_address: req.body.email,
       status: "subscribed",
-      headers: {
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      merge_fields: {
+        FNAME: req.body.firstName,
+        LNAME: req.body.lastName,
       },
     })
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      res.send(err);
+    .end(function (err, response) {
+      if (
+        response.status < 300 ||
+        (response.status === 400 && response.body.title === "Member Exists")
+      ) {
+        res.send("Signed Up!");
+      } else {
+        res.send("Sign Up Failed :(");
+      }
     });
 });
+
+
+
+
+// set api endpoint
+// app.get("/api/memberAdd", (req, res) => {
+//   mailchimp
+//     .post("/lists/c6b7992d29/members/", {
+//       email_address: req.query.email,
+//       status: "subscribed",
+//       headers: {
+//         "Access-Control-Allow-Headers": "Content-Type",
+//         "Access-Control-Allow-Origin": "*",
+//         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+//       },
+//     })
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => {
+//       res.send(err);
+//     });
+// });
 
 const port = process.env.PORT || 9001;
 app.listen(port);
