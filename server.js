@@ -22,6 +22,11 @@ app.get("/api/memberAdd", (req, res) => {
     .post("/lists/c6b7992d29/members/", {
       email_address: req.query.email,
       status: "subscribed",
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      },
     })
     .then((result) => {
       res.send(result);
@@ -30,7 +35,6 @@ app.get("/api/memberAdd", (req, res) => {
       res.send(err);
     });
 });
-
 
 const port = process.env.PORT || 9001;
 app.listen(port);
